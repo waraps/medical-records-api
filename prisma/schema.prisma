@@ -1,0 +1,128 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Rol {
+  id Int @id @default(autoincrement())
+
+  name String @unique
+
+  users User[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("roles")
+}
+
+model User {
+  id Int @id @default(autoincrement())
+
+  first_name String
+  last_name String
+  dni String
+  avatar String?
+  email String @unique
+  password String
+
+  rol_id Int @default(2)
+  rol Rol @relation(fields: [rol_id], references: [id])
+
+  patients Patient[]
+  records Record[]
+
+  refresh_token String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model PetSex {
+  id Int @id @default(autoincrement())
+
+  name String @unique
+
+  patients Patient[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("pet_sex")
+}
+
+model Patient {
+  id Int @id @default(autoincrement())
+
+  owner_first_name String
+  owner_last_name String
+  owner_phone String
+  owner_dni String
+  owner_email String
+
+  pet_avatar String?
+  pet_specie String
+  pet_race String
+  pet_name String
+  pet_birth DateTime
+  pet_color String
+
+  pet_sex_id Int
+  pet_sex PetSex @relation(fields: [pet_sex_id], references: [id])
+
+  neutered Boolean
+
+  // user (receptionist) can create many patients
+  created_by Int
+  user User @relation(fields: [created_by], references: [id])
+
+  records Record[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("patients")
+}
+
+model Record {
+  id Int @id @default(autoincrement())
+
+  reason String
+  revelevant_clinic String
+  diagnosis String
+  treatment String
+  weight Float
+
+  patient_id Int
+  patient Patient @relation(fields: [patient_id], references: [id])
+
+  // user (doctor) can create many records
+  created_by Int
+  user User @relation(fields: [created_by], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("records")
+}
+
+model Test {
+  id Int @id @default(autoincrement())
+
+  name String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("tests")
+}
