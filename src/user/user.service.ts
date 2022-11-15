@@ -19,7 +19,7 @@ export class UserService {
                     first_name: user.first_name,
                     last_name: user.last_name,
                     dni: user.dni,
-                    avatar: user.avatar || "https://cdn-icons-png.flaticon.com/512/623/623891.png",
+                    avatar: user.avatar || 'https://cdn-icons-png.flaticon.com/512/666/666201.png',
                     rol_id: user.rol_id,
                 },
             });
