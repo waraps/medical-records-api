@@ -1,6 +1,8 @@
+import { ConfigService } from '@nestjs/config';
 import { PrismaClient } from '@prisma/client'
 import * as argon from 'argon2';
 
+const config = new ConfigService()
 const prisma = new PrismaClient()
 
 async function main() {
@@ -18,7 +20,7 @@ async function main() {
         ],
     });
 
-    const hash = await argon.hash('123456');
+    const hash = await argon.hash(config.get('ADMIN_PASSWORD'));
     await prisma.user.createMany({
       data: [
           {
@@ -29,15 +31,6 @@ async function main() {
               dni: "00000000",
               avatar: "https://gravatar.com/avatar/0f37b1761eca504fd2d72045b2706330?s=400&d=robohash&r=x",
               rol_id: 1,
-          },
-          {
-              email: "doctor@mail.com",
-              password: hash,
-              first_name: "Doc",
-              last_name: "Tor",
-              dni: "00000001",
-              avatar: "https://gravatar.com/avatar/0f37b1761eca504fd2d72045b2706330?s=400&d=robohash&r=x",
-              rol_id: 2,
           },
       ],
     });
