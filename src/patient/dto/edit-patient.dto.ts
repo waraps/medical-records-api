@@ -4,53 +4,57 @@ export class EditPatientDto {
 
     @IsString()
     @IsOptional()
-    owner_first_name?: string
+    first_name?: string
 
     @IsString()
     @IsOptional()
-    owner_last_name?: string
+    last_name?: string
 
     @IsString()
     @IsOptional()
-    owner_phone?: string
+    phone?: string
     
     @IsString()
     @IsOptional()
-    owner_dni?: string    
+    dni?: string    
     
     @IsEmail()
     @IsOptional()
-    owner_email?: string
+    email?: string
     
     @IsString()
     @IsOptional()
-    pet_specie?: string
+    specie?: string
     
     @IsString()
     @IsOptional()
-    pet_race?: string
+    race?: string
     
     @IsString()
     @IsOptional()
-    pet_name?: string
+    name?: string
     
     @IsString()
     @IsOptional()
-    pet_birth?: string
+    birth?: string
 
     @IsString()
     @IsOptional()
-    pet_color?: string
+    color?: string
 
     @IsInt()
     @IsOptional()
-    pet_sex_id?: number
+    sex_id?: number
 
     @IsBoolean()
     @IsOptional()
     neutered?: boolean
 
+    @IsInt()
+    @IsOptional()
+    owner_id?: number
+
     @IsUrl()
     @IsOptional()
-    pet_avatar: string;
+    avatar: string;
 }

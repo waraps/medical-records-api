@@ -6,26 +6,50 @@ import { EditPatientDto, PatientDto } from './dto';
 export class PatientService {
     constructor(private prisma: PrismaService) {}
 
-    async createPatient(user_id: number, patient: PatientDto) {
+    async createPatient(user_id: number, owner_dni: string, patient: PatientDto) {
         try {
-            const pet_birth: Date = new Date(patient.pet_birth);
+
+            const owner = await this.prisma.owner.findUnique({
+                where: {
+                    dni: owner_dni
+                }
+            });
+
+            if(!owner) {
+                throw new ForbiddenException('Owner does not exists');
+            }
+
+            const pet_birth: Date = new Date(patient.birth);
+
+            const existsPatient = await this.prisma.patient.findFirst({
+                where: {
+                    specie: patient.specie,
+                    race: patient.race,
+                    name: patient.name,
+                    birth: pet_birth,
+                    color: patient.color,
+                    sex_id: patient.sex_id,
+                    neutered: patient.neutered,
+                    owner_id: patient.owner_id,
+                }
+            });
+
+            if(existsPatient) {
+                throw new ForbiddenException('Owner already has a pet registered with these details');
+            }
 
             const newPatient = await this.prisma.patient.create({
                 data: {
-                    owner_first_name: patient.owner_first_name,
-                    owner_last_name: patient.owner_last_name,
-                    owner_phone: patient.owner_phone,
-                    owner_dni: patient.owner_dni,
-                    owner_email: patient.owner_email,
-                    pet_specie: patient.pet_specie,
-                    pet_race: patient.pet_race,
-                    pet_name: patient.pet_name,
-                    pet_birth: pet_birth,
-                    pet_color: patient.pet_color,
-                    pet_sex_id: patient.pet_sex_id,
+                    specie: patient.specie,
+                    race: patient.race,
+                    name: patient.name,
+                    birth: pet_birth,
+                    color: patient.color,
+                    sex_id: patient.sex_id,
                     neutered: patient.neutered,
+                    owner_id: patient.owner_id,
                     created_by: user_id,
-                    pet_avatar: patient.pet_avatar || "https://cdn-icons-png.flaticon.com/512/21/21645.png",
+                    avatar: patient.avatar || "https://cdn-icons-png.flaticon.com/512/21/21645.png",
                 },
             });
     
@@ -67,15 +91,15 @@ export class PatientService {
                 throw new ForbiddenException('Patient does not exists');
             }
 
-            const pet_birth: Date = new Date(update_patient.pet_birth);
-            delete update_patient.pet_birth;
+            const pet_birth: Date = new Date(update_patient.birth);
+            delete update_patient.birth;
             
             return this.prisma.patient.update({
                 where: {
                     id: patient_id
                 },
                 data: {
-                    pet_birth: pet_birth,
+                    birth: pet_birth,
                     ...update_patient
                 },
             });
