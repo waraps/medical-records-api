@@ -10,8 +10,8 @@ export class PatientController {
     constructor(private patientService: PatientService) {}
 
     @Post()
-    createPatient(@GetUser('id') user_id: number, @Body() owner_dni: string, @Body() patient: PatientDto) {
-        return this.patientService.createPatient(user_id, owner_dni, patient);
+    createPatient(@GetUser('id') user_id: number, @Body() patient: PatientDto) {
+        return this.patientService.createPatient(user_id, patient);
     }
 
     @Get()

@@ -1,44 +1,43 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { PatientDto } from 'src/patient/dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { EditOwnerDto, OwnerDto } from './dto';
+import { EditOwnerDto, OwnerPetDto } from './dto';
 
 @Injectable()
 export class OwnerService {
     constructor(private prisma: PrismaService) {}
 
-    async createOwner(user_id: number, owner: OwnerDto, patient: PatientDto) {
+    async createOwner(user_id: number, ownerPet: OwnerPetDto) {
         try {
 
             const newOwner = await this.prisma.owner.create({
                 data: {
-                    first_name: owner.first_name,
-                    last_name: owner.last_name,
-                    dni: owner.dni,
-                    phone: owner.phone,
-                    address: owner.address,
-                    email: owner.email,
-                    occupation: owner.occupation,
-                    housing: owner.housing,
-                    other_pets: owner.other_pets,
-                    avatar: owner.avatar || 'https://cdn-icons-png.flaticon.com/512/666/666201.png'
+                    first_name: ownerPet.first_name,
+                    last_name: ownerPet.last_name,
+                    dni: ownerPet.dni,
+                    phone: ownerPet.phone,
+                    address: ownerPet.address,
+                    email: ownerPet.email,
+                    occupation: ownerPet.occupation,
+                    housing: ownerPet.housing,
+                    other_pets: ownerPet.other_pets,
+                    avatar: 'https://cdn-icons-png.flaticon.com/512/666/666201.png'
                 }
             });
 
-            const pet_birth: Date = new Date(patient.birth);
+            const pet_birth: Date = new Date(ownerPet.birth);
 
             await this.prisma.patient.create({
                 data: {
-                    specie: patient.specie,
-                    race: patient.race,
-                    name: patient.name,
+                    specie: ownerPet.specie,
+                    race: ownerPet.race,
+                    name: ownerPet.name,
                     birth: pet_birth,
-                    color: patient.color,
-                    sex_id: patient.sex_id,
-                    neutered: patient.neutered,
+                    color: ownerPet.color,
+                    sex_id: ownerPet.sex_id,
+                    neutered: ownerPet.neutered,
                     owner_id: newOwner.id,
                     created_by: user_id,
-                    avatar: patient.avatar || "https://cdn-icons-png.flaticon.com/512/21/21645.png",
+                    avatar: "https://cdn-icons-png.flaticon.com/512/21/21645.png",
                 },
             });
     
@@ -85,6 +84,18 @@ export class OwnerService {
             return this.prisma.owner.findFirst({
                 where: {
                     id: owner_id,
+                },
+            });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getOwnerByDNI(dni: string) {
+        try {    
+            return this.prisma.owner.findFirst({
+                where: {
+                    dni,
                 },
             });
         } catch (error) {

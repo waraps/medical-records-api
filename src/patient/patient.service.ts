@@ -6,12 +6,12 @@ import { EditPatientDto, PatientDto } from './dto';
 export class PatientService {
     constructor(private prisma: PrismaService) {}
 
-    async createPatient(user_id: number, owner_dni: string, patient: PatientDto) {
+    async createPatient(user_id: number, patient: PatientDto) {
         try {
 
             const owner = await this.prisma.owner.findUnique({
                 where: {
-                    dni: owner_dni
+                    id: patient.owner_id
                 }
             });
 

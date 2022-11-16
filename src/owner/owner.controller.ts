@@ -1,8 +1,7 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
-import { PatientDto } from 'src/patient/dto';
-import { EditOwnerDto, OwnerDto } from './dto';
+import { EditOwnerDto, OwnerPetDto } from './dto';
 import { OwnerService } from './owner.service';
 
 @UseGuards(JwtGuard)
@@ -11,8 +10,8 @@ export class OwnerController {
     constructor(private ownerService: OwnerService) {}
 
     @Post()
-    createOwner(@GetUser('id') user_id: number, @Body() owner: OwnerDto, @Body() patient: PatientDto ) {
-        return this.ownerService.createOwner(user_id, owner, patient);
+    createOwner(@GetUser('id') user_id: number, @Body() ownerPet: OwnerPetDto) {
+        return this.ownerService.createOwner(user_id, ownerPet);
     }
 
     @Get()
@@ -21,8 +20,14 @@ export class OwnerController {
     }
 
     @Get(':id')
-    getOwnerById(@Param('id', ParseIntPipe) patient_id: number, withPets = false) {
-        return this.ownerService.getOwnerById(patient_id, withPets);
+    getOwnerById(@Param('id', ParseIntPipe) owner_id: number, withPets = false) {
+        return this.ownerService.getOwnerById(owner_id, withPets);
+    }
+
+    @Get('/dni/:dni')
+    getOwnerByDNI(@Param('dni') dni: string) {
+        console.log(dni);
+        return this.ownerService.getOwnerByDNI(dni);
     }
 
     @Put(':id')

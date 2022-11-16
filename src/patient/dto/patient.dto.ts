@@ -30,7 +30,7 @@ export class PatientDto {
     neutered: boolean
 
     @IsInt()
-    @IsNotEmpty()
+    @IsOptional()
     owner_id: number
 
     @IsUrl()
