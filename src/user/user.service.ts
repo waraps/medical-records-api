@@ -49,6 +49,7 @@ export class UserService {
                     rol_id: true,
                     createdAt: true,
                     updatedAt: true,
+                    avatar: true,
                 }
             });   
         } catch (error) {
@@ -71,6 +72,7 @@ export class UserService {
                     rol_id: true,
                     createdAt: true,
                     updatedAt: true,
+                    avatar: true,
                 }
             });
         } catch (error) {
