@@ -61,7 +61,24 @@ export class PatientService {
 
     async getPatients() {
         try {
-            return this.prisma.patient.findMany();   
+            return this.prisma.patient.findMany({
+                select: {
+                    id: true,
+                    specie: true,
+                    race: true,
+                    name: true,
+                    birth: true,
+                    color: true,
+                    sex_id: true,
+                    pet_sex: true,
+                    neutered: true,
+                    owner_id: true,
+                    created_by: true,
+                    user: true,
+                    avatar: true,
+                    createdAt: true,
+                }
+            });   
         } catch (error) {
             throw error;
         }
