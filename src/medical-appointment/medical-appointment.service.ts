@@ -3,12 +3,30 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { MedicalAppointmentDto } from './dto';
 
+enum AppointmentStatusConstants {
+    WAITING = 'waiting',
+    IN_PROGRESS = 'in progress',
+    FINISHED = 'finished',
+}
+
 @Injectable()
 export class MedicalAppointmentService {
     constructor(private prisma: PrismaService) {}
 
     async createAppointment(appointment: MedicalAppointmentDto) {
         try {
+
+            const existAppointment = await this.prisma.medicalAppointments.findFirst({
+                where: {
+                    status: AppointmentStatusConstants.WAITING || AppointmentStatusConstants.IN_PROGRESS,
+                    patient_id: appointment.patient_id,
+                }
+            })
+
+            if (existAppointment) {
+                throw new ForbiddenException('Patient is in an appointment already');
+            }
+
             const newAppointment = await this.prisma.medicalAppointments.create({
                 data: {
                     status: appointment.status,
@@ -31,6 +49,28 @@ export class MedicalAppointmentService {
     async getAppointments() {
         try {
             return this.prisma.medicalAppointments.findMany({
+                select: {
+                    id: true,
+                    status: true,
+                    patient_id: true,
+                    patient: true,
+                    user_id: true,
+                    user: true,
+                    createdAt: true,
+                    updatedAt: true,
+                }
+            });   
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getAppointmentsByDoctor(doctor_id: number) {
+        try {
+            return this.prisma.medicalAppointments.findMany({
+                where: {
+                    user_id: doctor_id || undefined || null,
+                },
                 select: {
                     id: true,
                     status: true,

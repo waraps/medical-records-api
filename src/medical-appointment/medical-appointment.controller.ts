@@ -1,7 +1,10 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
+import { GetUser } from 'src/auth/decorator';
+import { JwtGuard } from 'src/auth/guard';
 import { MedicalAppointmentDto } from './dto';
 import { MedicalAppointmentService } from './medical-appointment.service';
 
+@UseGuards(JwtGuard)
 @Controller('medical-appointment')
 export class MedicalAppointmentController {
     constructor(private medicalAppointmentServiceService: MedicalAppointmentService) {}
@@ -14,6 +17,11 @@ export class MedicalAppointmentController {
     @Get()
     getAppointments() {
         return this.medicalAppointmentServiceService.getAppointments();
+    }
+
+    @Get('me')
+    getAppointmentsByDoctor(@GetUser('id') doctor_id: number) {
+        return this.medicalAppointmentServiceService.getAppointmentsByDoctor(doctor_id);
     }
 
     @Get(':id')
