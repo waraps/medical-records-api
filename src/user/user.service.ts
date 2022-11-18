@@ -57,6 +57,23 @@ export class UserService {
         }
     }
 
+    async getDoctorsAvailables() {
+        try {
+            return this.prisma.user.findMany({
+                where: {
+                    rol_id: 2,
+                },
+                select: {
+                    id: true,
+                    last_name: true,
+                    first_name: true,
+                }
+            });   
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async getUserById(user_id: number) {
         try {
             return this.prisma.user.findFirst({
