@@ -44,6 +44,8 @@ model User {
   med_appointments MedicalAppointments[]
   records Record[]
 
+  openToAppointment Boolean @default(true)
+
   refresh_token String?
 
   createdAt DateTime @default(now())
@@ -122,11 +124,11 @@ model Patient {
 model Record {
   id Int @id @default(autoincrement())
 
-  reason String
-  revelevant_clinic String
-  diagnosis String
-  treatment String
-  weight Float
+  reason String?
+  revelevant_clinic String?
+  diagnosis String?
+  treatment String?
+  weight Float?
 
   patient_id Int
   patient Patient @relation(fields: [patient_id], references: [id])
