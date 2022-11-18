@@ -26,7 +26,6 @@ export class OwnerController {
 
     @Get('/dni/:dni')
     getOwnerByDNI(@Param('dni') dni: string) {
-        console.log(dni);
         return this.ownerService.getOwnerByDNI(dni);
     }
 
