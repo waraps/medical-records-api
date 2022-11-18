@@ -30,6 +30,11 @@ export class UserController {
         return this.userService.getUsers();
     }
 
+    @Get('/doctors')
+    getDoctorsAvailables() {
+        return this.userService.getDoctorsAvailables();
+    }
+
     @Get(':id')
     getUserById(@Param('id', ParseIntPipe) user_id: number) {
         return this.userService.getUserById(user_id);
