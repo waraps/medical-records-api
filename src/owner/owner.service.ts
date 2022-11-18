@@ -97,6 +97,39 @@ export class OwnerService {
                 where: {
                     dni,
                 },
+                select: {
+                    id: true,
+                    first_name: true,
+                    last_name: true,
+                    dni: true,
+                    phone: true,
+                    address: true,
+                    email: true,
+                    occupation: true,
+                    housing: true,
+                    other_pets: true,
+                    avatar: true,
+                    pets: { 
+                        select: {
+                            id: true,
+                            specie: true,
+                            race: true,
+                            name: true,
+                            birth: true,
+                            color: true,
+                            sex_id: true,
+                            pet_sex: true,
+                            neutered: true,
+                            owner_id: true,
+                            created_by: true,
+                            user: true,
+                            avatar: true,
+                            createdAt: true,
+                        }
+                    },
+                    createdAt: true,
+                    updatedAt: true,
+                }
             });
         } catch (error) {
             throw error;

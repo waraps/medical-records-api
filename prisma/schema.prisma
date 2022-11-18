@@ -37,7 +37,11 @@ model User {
   rol_id Int @default(2)
   rol Rol @relation(fields: [rol_id], references: [id])
 
+  // user (receptionist) could have created many patients
   patients Patient[]
+
+  // user (doctor) can have many medical appointments and  records
+  med_appointments MedicalAppointments[]
   records Record[]
 
   refresh_token String?
@@ -106,6 +110,9 @@ model Patient {
   created_by Int
   user User @relation(fields: [created_by], references: [id])
 
+  // user (doctor) can have many medical appointments  
+  med_appointments MedicalAppointments[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -143,4 +150,20 @@ model Test {
   updatedAt DateTime @updatedAt
 
   @@map("tests")
+}
+
+model MedicalAppointments {
+  id Int @id @default(autoincrement())
+
+  status String
+  patient_id Int
+  patient Patient @relation(fields: [patient_id], references: [id])
+
+  user_id Int?
+  user User? @relation(fields: [user_id], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("medical_appointments")
 }

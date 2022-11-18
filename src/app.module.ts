@@ -9,6 +9,7 @@ import { PatientModule } from './patient/patient.module';
 import { RecordModule } from './record/record.module';
 import { TestModule } from './test/test.module';
 import { OwnerModule } from './owner/owner.module';
+import { MedicalAppointmentModule } from './medical-appointment/medical-appointment.module';
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }),
@@ -19,7 +20,9 @@ import { OwnerModule } from './owner/owner.module';
     PetSexModule, 
     PatientModule, 
     RecordModule, 
-    TestModule, OwnerModule,
+    TestModule, 
+    OwnerModule, 
+    MedicalAppointmentModule,
   ],
 })
 export class AppModule {}
