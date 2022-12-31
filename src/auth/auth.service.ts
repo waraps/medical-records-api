@@ -9,12 +9,13 @@ import { ConfigService } from "@nestjs/config";
 type Tokens = {
     access_token: string;
     refresh_token: string;
+    rol: number;
 }
 
 @Injectable()
 export class AuthService {
     constructor(private prisma: PrismaService, private jwt: JwtService, private config: ConfigService) {}
-    
+
     async signUp(user: AuthDto): Promise<Tokens> {
         try {
             const hash = await argon.hash(user.password);
@@ -30,7 +31,7 @@ export class AuthService {
                 },
             });
 
-            const tokens = await this.signToken(newUser.id,  newUser.email);
+            const tokens = await this.signToken(newUser.id, newUser.email, newUser.rol_id);
             await this.updateRefreshToken(newUser.id, tokens.refresh_token);
 
             return tokens;
@@ -57,9 +58,9 @@ export class AuthService {
             const pwMatches = await argon.verify(user.password, credentials.password);
             if (!pwMatches) throw new ForbiddenException('Credentials incorrect');
 
-            const tokens = await this.signToken(user.id,  user.email);
+            const tokens = await this.signToken(user.id, user.email, user.rol_id);
             await this.updateRefreshToken(user.id, tokens.refresh_token);
-            
+
             return tokens;
 
         } catch (error) {
@@ -96,20 +97,20 @@ export class AuthService {
         const rtMatches = await argon.verify(user.refresh_token, refresh_token);
         if(!rtMatches) throw new ForbiddenException('Access Denied');
 
-        const tokens = await this.signToken(user.id,  user.email);
+        const tokens = await this.signToken(user.id,  user.email, user.rol_id);
         await this.updateRefreshToken(user.id, tokens.refresh_token);
-        
+
         return tokens;
     }
 
     //helpers
-    async signToken(user_id: number, email: string): Promise<Tokens> {
+    async signToken(user_id: number, email: string, rol: number): Promise<Tokens> {
         try {
             const payload = {
                 sub: user_id,
                 email,
             };
-    
+
             const [access_token, refresh_token] = await Promise.all([
                 this.jwt.signAsync(payload, {
                     expiresIn: 60 * 60 * 3,
@@ -120,8 +121,8 @@ export class AuthService {
                     secret: this.config.get('REFRESH_JWT_SECRET'),
                 })
             ]);
-    
-            return { access_token, refresh_token }
+
+            return { access_token, refresh_token, rol }
         } catch (error) {
             throw error;
         }
@@ -129,7 +130,7 @@ export class AuthService {
 
     async updateRefreshToken(user_id: number, refresh_token: string): Promise<void> {
         try {
-            const hash = await argon.hash(refresh_token); 
+            const hash = await argon.hash(refresh_token);
             await this.prisma.user.update({
                 where: {
                     id: user_id,
