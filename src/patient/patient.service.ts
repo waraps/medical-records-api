@@ -52,7 +52,7 @@ export class PatientService {
                     avatar: patient.avatar || "https://cdn-icons-png.flaticon.com/512/21/21645.png",
                 },
             });
-    
+
             return newPatient;
         } catch (error) {
             throw error;
@@ -72,13 +72,13 @@ export class PatientService {
                     sex_id: true,
                     pet_sex: true,
                     neutered: true,
-                    owner_id: true,
+                    owner: true,
                     created_by: true,
                     user: true,
                     avatar: true,
                     createdAt: true,
                 }
-            });   
+            });
         } catch (error) {
             throw error;
         }
@@ -89,6 +89,22 @@ export class PatientService {
             return this.prisma.patient.findFirst({
                 where: {
                     id: patient_id,
+                },
+                select: {
+                    id: true,
+                    specie: true,
+                    race: true,
+                    name: true,
+                    birth: true,
+                    color: true,
+                    sex_id: true,
+                    pet_sex: true,
+                    neutered: true,
+                    owner: true,
+                    created_by: true,
+                    user: true,
+                    avatar: true,
+                    createdAt: true,
                 }
             });
         } catch (error) {
@@ -103,14 +119,14 @@ export class PatientService {
                     id: patient_id
                 }
             });
-    
+
             if(!patient) {
                 throw new ForbiddenException('Patient does not exists');
             }
 
             const pet_birth: Date = new Date(update_patient.birth);
             delete update_patient.birth;
-            
+
             return this.prisma.patient.update({
                 where: {
                     id: patient_id
@@ -132,11 +148,11 @@ export class PatientService {
                     id: patient_id
                 }
             });
-    
+
             if(!patient) {
                 throw new ForbiddenException('Patient does not exists');
             }
-    
+
             await this.prisma.patient.delete({
                 where: {
                     id: patient_id,
