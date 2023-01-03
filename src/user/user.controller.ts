@@ -50,4 +50,9 @@ export class UserController {
     deleteUserById(@Param('id', ParseIntPipe) user_id: number) {
         return this.userService.deleteUserById(user_id);
     }
+
+    @Get('/admin/stats')
+    getAdminStats() {
+        return this.userService.getAdminStats();
+    }
 }

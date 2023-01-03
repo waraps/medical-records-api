@@ -51,7 +51,7 @@ export class UserService {
                     updatedAt: true,
                     avatar: true,
                 }
-            });   
+            });
         } catch (error) {
             throw error;
         }
@@ -68,7 +68,7 @@ export class UserService {
                     last_name: true,
                     first_name: true,
                 }
-            });   
+            });
         } catch (error) {
             throw error;
         }
@@ -79,7 +79,7 @@ export class UserService {
             return this.prisma.user.findFirst({
                 where: {
                     id: user_id,
-                }, 
+                },
                 select: {
                     id: true,
                     first_name: true,
@@ -104,11 +104,11 @@ export class UserService {
                     id: user_id
                 }
             });
-    
+
             if(!userExist) {
                 throw new ForbiddenException('User does not exists');
             }
-            
+
             const user = await this.prisma.user.update({
                 where: {
                     id: user_id
@@ -117,9 +117,9 @@ export class UserService {
                     ...update_user
                 },
             });
-    
+
             delete user.password;
-    
+
             return user;
         } catch (error) {
             throw error;
@@ -133,16 +133,37 @@ export class UserService {
                     id: user_id
                 }
             });
-    
+
             if(!user) {
                 throw new ForbiddenException('User does not exists');
             }
-    
+
             await this.prisma.user.delete({
                 where: {
                     id: user_id,
                 }
             });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getAdminStats() {
+        try {
+            const usersCount: number = await this.prisma.user.count();
+            const patientsCount: number = await this.prisma.patient.count();
+            const ownersCount: number = await this.prisma.owner.count();
+            const testsCount: number = await this.prisma.test.count();
+            const patientInRoomCount: number = await this.prisma.medicalAppointments.count();
+
+            return {
+                usersCount,
+                patientsCount,
+                ownersCount,
+                testsCount,
+                patientInRoomCount,
+            }
+
         } catch (error) {
             throw error;
         }
