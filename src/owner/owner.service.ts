@@ -64,36 +64,38 @@ export class OwnerService {
         }
     }
 
-    async getOwnerById(owner_id: number, withPets: boolean) {
+    async getOwnerById(owner_id: number) {
         try {
-            if(withPets) {
-                return this.prisma.owner.findFirst({
-                    where: {
-                        id: owner_id,
-                    },
-                    select: {
-                        id: true,
-                        first_name: true,
-                        last_name: true,
-                        dni: true,
-                        phone: true,
-                        address: true,
-                        email: true,
-                        occupation: true,
-                        housing: true,
-                        other_pets: true,
-                        avatar: true,
-                        pets: true,
-                        createdAt: true,
-                        updatedAt: true,
-                    }
-                });
-            }
-
             return this.prisma.owner.findFirst({
                 where: {
                     id: owner_id,
                 },
+                select: {
+                    id: true,
+                    first_name: true,
+                    last_name: true,
+                    dni: true,
+                    phone: true,
+                    address: true,
+                    email: true,
+                    occupation: true,
+                    housing: true,
+                    other_pets: true,
+                    avatar: true,
+                    pets: {
+                        select: {
+                            id: true,
+                            specie: true,
+                            race: true,
+                            name: true,
+                            birth: true,
+                            color: true,
+                            avatar: true,
+                        }
+                    },
+                    createdAt: true,
+                    updatedAt: true,
+                }
             });
         } catch (error) {
             throw error;

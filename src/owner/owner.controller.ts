@@ -20,8 +20,8 @@ export class OwnerController {
     }
 
     @Get(':id')
-    getOwnerById(@Param('id', ParseIntPipe) owner_id: number, withPets = false) {
-        return this.ownerService.getOwnerById(owner_id, withPets);
+    getOwnerById(@Param('id', ParseIntPipe) owner_id: number) {
+        return this.ownerService.getOwnerById(owner_id);
     }
 
     @Get('/dni/:dni')
