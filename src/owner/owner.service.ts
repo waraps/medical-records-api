@@ -8,6 +8,15 @@ export class OwnerService {
 
     async createOwner(user_id: number, ownerPet: OwnerPetDto) {
         try {
+            const owner = await this.prisma.owner.findUnique({
+                where: {
+                    dni: ownerPet.dni
+                }
+            });
+
+            if(owner) {
+                throw new ForbiddenException('Owner already exists');
+            }
 
             const newOwner = await this.prisma.owner.create({
                 data: {
@@ -40,7 +49,7 @@ export class OwnerService {
                     avatar: "https://cdn-icons-png.flaticon.com/512/21/21645.png",
                 },
             });
-    
+
             return newOwner;
         } catch (error) {
             throw error;
@@ -49,7 +58,7 @@ export class OwnerService {
 
     async getOwners() {
         try {
-            return this.prisma.owner.findMany();   
+            return this.prisma.owner.findMany();
         } catch (error) {
             throw error;
         }
@@ -61,7 +70,7 @@ export class OwnerService {
                 return this.prisma.owner.findFirst({
                     where: {
                         id: owner_id,
-                    }, 
+                    },
                     select: {
                         id: true,
                         first_name: true,
@@ -80,7 +89,7 @@ export class OwnerService {
                     }
                 });
             }
-            
+
             return this.prisma.owner.findFirst({
                 where: {
                     id: owner_id,
@@ -92,7 +101,7 @@ export class OwnerService {
     }
 
     async getOwnerByDNI(dni: string) {
-        try {    
+        try {
             return this.prisma.owner.findFirst({
                 where: {
                     dni,
@@ -109,7 +118,7 @@ export class OwnerService {
                     housing: true,
                     other_pets: true,
                     avatar: true,
-                    pets: { 
+                    pets: {
                         select: {
                             id: true,
                             specie: true,
@@ -143,11 +152,11 @@ export class OwnerService {
                     id: owner_id
                 }
             });
-    
+
             if(!owner) {
                 throw new ForbiddenException('Owner does not exists');
             }
-            
+
             return this.prisma.owner.update({
                 where: {
                     id: owner_id
@@ -168,11 +177,11 @@ export class OwnerService {
                     id: owner_id
                 }
             });
-    
+
             if(!owner) {
                 throw new ForbiddenException('Owner does not exists');
             }
-    
+
             await this.prisma.owner.delete({
                 where: {
                     id: owner_id,
