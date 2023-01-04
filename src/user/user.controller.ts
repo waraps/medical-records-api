@@ -4,6 +4,7 @@ import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
 import { EditUserDto, UserDto } from './dto';
 import { UserService } from './user.service';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @UseGuards(JwtGuard)
 @Controller('users')
@@ -54,5 +55,10 @@ export class UserController {
     @Get('/admin/stats')
     getAdminStats() {
         return this.userService.getAdminStats();
+    }
+
+    @Put('/change/password')
+    changePassword(@GetUser('id') user_id: number, @Body() update_password: UpdatePasswordDto) {
+        return this.userService.changePassword(user_id, update_password.currentPassword, update_password.newPassword);
     }
 }

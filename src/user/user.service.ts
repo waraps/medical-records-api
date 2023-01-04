@@ -168,4 +168,36 @@ export class UserService {
             throw error;
         }
     }
+
+    async changePassword(user_id: number, currentPassword: string, newPassword: string) {
+        try {
+            const userExist = await this.prisma.user.findUnique({
+                where: {
+                    id: user_id,
+                },
+            });
+            if (!userExist) throw new ForbiddenException('User does not exists');
+
+            const pwMatches = await argon.verify(userExist.password, currentPassword);
+            if (!pwMatches) throw new ForbiddenException('Credentials incorrect');
+
+            const hash = await argon.hash(newPassword);
+
+            const user = await this.prisma.user.update({
+                where: {
+                    id: user_id
+                },
+                data: {
+                    password: hash,
+                },
+            });
+
+            delete user.password;
+            delete user.refresh_token;
+
+            return user;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
