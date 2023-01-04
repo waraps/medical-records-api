@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { AuthDto, SignInDto } from "./dto";
+import { AuthDto, RecoveryPasswordDto, SignInDto } from "./dto";
 import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { JwtService } from "@nestjs/jwt";
@@ -101,6 +101,22 @@ export class AuthService {
         await this.updateRefreshToken(user.id, tokens.refresh_token);
 
         return tokens;
+    }
+
+    async recoveryPassword(recovery: RecoveryPasswordDto): Promise<string> {
+        try {
+            const user = await this.prisma.user.findUnique({
+                where: {
+                    email: recovery.email,
+                },
+            });
+            if (!user) throw new ForbiddenException('Credentials incorrect');
+
+            return 'Galenostest123@';
+
+        } catch (error) {
+            throw error;
+        }
     }
 
     //helpers
