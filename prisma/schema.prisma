@@ -112,7 +112,7 @@ model Patient {
   created_by Int
   user User @relation(fields: [created_by], references: [id])
 
-  // user (doctor) can have many medical appointments  
+  // user (doctor) can have many medical appointments
   med_appointments MedicalAppointments[]
 
   createdAt DateTime @default(now())
@@ -146,7 +146,7 @@ model Record {
 model Test {
   id Int @id @default(autoincrement())
 
-  name String
+  name String @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -161,8 +161,8 @@ model MedicalAppointments {
   patient_id Int
   patient Patient @relation(fields: [patient_id], references: [id])
 
-  user_id Int?
-  user User? @relation(fields: [user_id], references: [id])
+  doctor_id Int?
+  doctor User? @relation(fields: [doctor_id], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
