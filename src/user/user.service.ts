@@ -3,14 +3,15 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { EditUserDto, UserDto } from './dto';
 import * as argon from 'argon2';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService {
-    constructor(private prisma: PrismaService) {}
+    constructor(private prisma: PrismaService, private config: ConfigService) {}
 
     async createUser(user: UserDto) {
         try {
-            const hash = await argon.hash(user.password);
+            const hash = await argon.hash(this.config.get('DEFAULT_PASSWORD'));
 
             const newUser = await this.prisma.user.create({
                 data: {
@@ -19,7 +20,7 @@ export class UserService {
                     first_name: user.first_name,
                     last_name: user.last_name,
                     dni: user.dni,
-                    avatar: user.avatar || 'https://cdn-icons-png.flaticon.com/512/666/666201.png',
+                    avatar: user.avatar || 'https://i.ibb.co/C2Vw01w/galenos.png',
                     rol_id: user.rol_id,
                 },
             });
