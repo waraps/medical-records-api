@@ -11,5 +11,5 @@ export class MedicalAppointmentDto {
 
     @IsInt()
     @IsOptional()
-    user_id: number;
+    doctor_id: number;
 }

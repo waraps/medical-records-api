@@ -31,10 +31,10 @@ export class MedicalAppointmentService {
                 data: {
                     status: appointment.status,
                     patient_id: appointment.patient_id,
-                    user_id: appointment.user_id,
+                    doctor_id: appointment.doctor_id,
                 }
             });
-    
+
             return newAppointment;
         } catch (error) {
             if (error instanceof PrismaClientKnownRequestError) {
@@ -54,12 +54,12 @@ export class MedicalAppointmentService {
                     status: true,
                     patient_id: true,
                     patient: true,
-                    user_id: true,
-                    user: true,
+                    doctor_id: true,
+                    doctor: true,
                     createdAt: true,
                     updatedAt: true,
                 }
-            });   
+            });
         } catch (error) {
             throw error;
         }
@@ -69,19 +69,19 @@ export class MedicalAppointmentService {
         try {
             return this.prisma.medicalAppointments.findMany({
                 where: {
-                    user_id: doctor_id || undefined || null,
+                    doctor_id: doctor_id || null,
                 },
                 select: {
                     id: true,
                     status: true,
                     patient_id: true,
                     patient: true,
-                    user_id: true,
-                    user: true,
+                    doctor_id: true,
+                    doctor: true,
                     createdAt: true,
                     updatedAt: true,
                 }
-            });   
+            });
         } catch (error) {
             throw error;
         }
@@ -106,11 +106,11 @@ export class MedicalAppointmentService {
                     id: appointment_id
                 }
             });
-    
+
             if(!appointment) {
                 throw new ForbiddenException('Medical appointment does not exists');
             }
-    
+
             return this.prisma.medicalAppointments.update({
                 where: {
                     id: appointment_id,
@@ -131,11 +131,11 @@ export class MedicalAppointmentService {
                     id: appointment_id
                 }
             });
-    
+
             if(!appointment) {
                 throw new ForbiddenException('Medical appointment does not exists');
             }
-    
+
             await this.prisma.medicalAppointments.delete({
                 where: {
                     id: appointment_id,
