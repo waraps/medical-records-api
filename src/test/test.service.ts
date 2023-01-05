@@ -9,12 +9,22 @@ export class TestService {
 
     async createTest(test: TestDto) {
         try {
-            const newTest = await this.prisma.test.create({
-                data: {
-                    name: test.name,
+            const testExist = await this.prisma.test.findUnique({
+                where: {
+                    name: test.name.toUpperCase()
                 }
             });
-    
+
+            if(testExist) {
+                throw new ForbiddenException('Test already exists');
+            }
+
+            const newTest = await this.prisma.test.create({
+                data: {
+                    name: test.name.toUpperCase(),
+                }
+            });
+
             return newTest;
         } catch (error) {
             if (error instanceof PrismaClientKnownRequestError) {
@@ -28,7 +38,7 @@ export class TestService {
 
     async getTests() {
         try {
-            return this.prisma.test.findMany();   
+            return this.prisma.test.findMany();
         } catch (error) {
             throw error;
         }
@@ -53,11 +63,11 @@ export class TestService {
                     id: test_id
                 }
             });
-    
+
             if(!test) {
                 throw new ForbiddenException('Test does not exists');
             }
-    
+
             return this.prisma.test.update({
                 where: {
                     id: test_id,
@@ -78,11 +88,11 @@ export class TestService {
                     id: test_id
                 }
             });
-    
+
             if(!test) {
                 throw new ForbiddenException('Test does not exists');
             }
-    
+
             await this.prisma.test.delete({
                 where: {
                     id: test_id,
