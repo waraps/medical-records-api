@@ -29,7 +29,7 @@ export class OwnerService {
                     occupation: ownerPet.occupation,
                     housing: ownerPet.housing,
                     other_pets: ownerPet.other_pets,
-                    avatar: 'https://cdn-icons-png.flaticon.com/512/666/666201.png'
+                    avatar: 'https://i.ibb.co/C2Vw01w/galenos.png'
                 }
             });
 
