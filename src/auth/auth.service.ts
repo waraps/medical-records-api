@@ -5,6 +5,7 @@ import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
+import { MailService } from "src/mailer/mail.service";
 
 type Tokens = {
     access_token: string;
@@ -14,7 +15,7 @@ type Tokens = {
 
 @Injectable()
 export class AuthService {
-    constructor(private prisma: PrismaService, private jwt: JwtService, private config: ConfigService) {}
+    constructor(private prisma: PrismaService, private jwt: JwtService, private config: ConfigService, private mailService: MailService) {}
 
     async signUp(user: AuthDto): Promise<Tokens> {
         try {
@@ -103,17 +104,27 @@ export class AuthService {
         return tokens;
     }
 
-    async recoveryPassword(recovery: RecoveryPasswordDto): Promise<string> {
+    async recoveryPassword(recovery: RecoveryPasswordDto): Promise<void> {
         try {
-            const user = await this.prisma.user.findUnique({
+            const userExists = await this.prisma.user.findUnique({
                 where: {
                     email: recovery.email,
                 },
             });
-            if (!user) throw new ForbiddenException('Credentials incorrect');
+            if (!userExists) throw new ForbiddenException('Credentials incorrect');
 
-            return 'Galenostest123@';
+            const hash = await argon.hash(this.config.get('DEFAULT_PASSWORD'));
 
+            const user = await this.prisma.user.update({
+                where: {
+                    email: recovery.email
+                },
+                data: {
+                    password: hash,
+                },
+            });
+
+            return await this.mailService.sendNewPassword(user, this.config.get('DEFAULT_PASSWORD'));
         } catch (error) {
             throw error;
         }

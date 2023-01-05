@@ -10,19 +10,20 @@ import { RecordModule } from './record/record.module';
 import { TestModule } from './test/test.module';
 import { OwnerModule } from './owner/owner.module';
 import { MedicalAppointmentModule } from './medical-appointment/medical-appointment.module';
+import { MailModule } from './mailer/mail.module';
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }),
-    PrismaModule, 
+    PrismaModule,
     AuthModule,
-    RolModule, 
-    UserModule, 
-    PetSexModule, 
-    PatientModule, 
-    RecordModule, 
-    TestModule, 
-    OwnerModule, 
-    MedicalAppointmentModule,
+    RolModule,
+    UserModule,
+    PetSexModule,
+    PatientModule,
+    RecordModule,
+    TestModule,
+    OwnerModule,
+    MedicalAppointmentModule, MailModule,
   ],
 })
 export class AppModule {}
