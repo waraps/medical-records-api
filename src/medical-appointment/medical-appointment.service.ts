@@ -126,7 +126,25 @@ export class MedicalAppointmentService {
                 select: {
                     id: true,
                     status: true,
-                    patient: true,
+                    patient: {
+                        select: {
+                            id: true,
+                            specie: true,
+                            race: true,
+                            name: true,
+                            birth: true,
+                            color: true,
+                            sex_id: true,
+                            pet_sex: true,
+                            neutered: true,
+                            owner: true,
+                            created_by: true,
+                            user: true,
+                            avatar: true,
+                            in_room: true,
+                            createdAt: true,
+                        }
+                    },
                     doctor: true,
                     record: true,
                     createdAt: true,
