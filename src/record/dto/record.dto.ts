@@ -1,27 +1,31 @@
-import { IsInt, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class RecordDto {
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     reason: string;
 
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     revelevant_clinic: string;
 
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     diagnosis: string;
 
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     treatment: string;
 
     @IsNumber({ maxDecimalPlaces: 2 })
-    @IsNotEmpty()
+    @IsOptional()
     weight: number;
 
     @IsInt()
     @IsNotEmpty()
     patient_id: number
+
+    @IsInt()
+    @IsNotEmpty()
+    appointment_id: number
 }

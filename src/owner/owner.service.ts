@@ -132,9 +132,11 @@ export class OwnerService {
                             pet_sex: true,
                             neutered: true,
                             owner_id: true,
+                            owner: true,
                             created_by: true,
                             user: true,
                             avatar: true,
+                            in_room: true,
                             createdAt: true,
                         }
                     },

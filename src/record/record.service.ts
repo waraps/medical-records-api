@@ -1,6 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { EditRecordDto, RecordDto } from './dto';
+import { AppointmentStatusConstants } from '../constanst';
 
 @Injectable()
 export class RecordService {
@@ -11,16 +12,30 @@ export class RecordService {
 
             const newRecord = await this.prisma.record.create({
                 data: {
-                    reason: record.reason,
-                    revelevant_clinic: record.revelevant_clinic,
-                    diagnosis: record.diagnosis,
-                    treatment: record.treatment,
-                    weight: record.weight,
                     patient_id: record.patient_id,
                     created_by: user_id,
+                    appointment_id: record.appointment_id,
                 },
             });
-    
+
+            await this.prisma.medicalAppointments.update({
+                where: {
+                    id: record.appointment_id,
+                },
+                data: {
+                    status: AppointmentStatusConstants.IN_PROGRESS,
+                },
+            });
+
+            await this.prisma.user.update({
+                where: {
+                    id: user_id,
+                },
+                data: {
+                    openToAppointment: false
+                },
+            });
+
             return newRecord;
         } catch (error) {
             throw error;
@@ -29,7 +44,7 @@ export class RecordService {
 
     async getRecords() {
         try {
-            return this.prisma.record.findMany();   
+            return this.prisma.record.findMany();
         } catch (error) {
             throw error;
         }
@@ -53,7 +68,7 @@ export class RecordService {
                 where: {
                     patient_id: patient_id,
                 },
-            });   
+            });
         } catch (error) {
             throw error;
         }
@@ -66,11 +81,11 @@ export class RecordService {
                     id: record_id
                 }
             });
-    
+
             if(!record) {
                 throw new ForbiddenException('Record does not exists');
             }
-            
+
             return this.prisma.record.update({
                 where: {
                     id: record_id
@@ -91,11 +106,11 @@ export class RecordService {
                     id: record_id
                 }
             });
-    
+
             if(!record) {
                 throw new ForbiddenException('Record does not exists');
             }
-    
+
             await this.prisma.record.delete({
                 where: {
                     id: record_id,

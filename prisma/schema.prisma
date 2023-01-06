@@ -115,6 +115,8 @@ model Patient {
   // user (doctor) can have many medical appointments
   med_appointments MedicalAppointments[]
 
+  in_room Boolean?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -130,12 +132,17 @@ model Record {
   treatment String?
   weight Float?
 
+  tests Test[]
+
+  appointment_id Int @unique
+  appointment MedicalAppointments @relation(fields: [appointment_id], references: [id])
+
   patient_id Int
   patient Patient @relation(fields: [patient_id], references: [id])
 
   // user (doctor) can create many records
   created_by Int
-  user User @relation(fields: [created_by], references: [id])
+  doctor User @relation(fields: [created_by], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -147,6 +154,9 @@ model Test {
   id Int @id @default(autoincrement())
 
   name String @unique
+
+  record_id Int?
+  record Record? @relation(fields: [record_id], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -163,6 +173,8 @@ model MedicalAppointments {
 
   doctor_id Int?
   doctor User? @relation(fields: [doctor_id], references: [id])
+
+  record Record?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -2,12 +2,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { MedicalAppointmentDto } from './dto';
-
-enum AppointmentStatusConstants {
-    WAITING = 'waiting',
-    IN_PROGRESS = 'in progress',
-    FINISHED = 'finished',
-}
+import { AppointmentStatusConstants } from '../constanst';
 
 @Injectable()
 export class MedicalAppointmentService {
@@ -15,6 +10,16 @@ export class MedicalAppointmentService {
 
     async createAppointment(appointment: MedicalAppointmentDto) {
         try {
+
+            const patient = await this.prisma.patient.findUnique({
+                where: {
+                    id: appointment.patient_id
+                }
+            });
+
+            if(!patient) {
+                throw new ForbiddenException('Patient does not exists');
+            }
 
             const existAppointment = await this.prisma.medicalAppointments.findFirst({
                 where: {
@@ -33,6 +38,15 @@ export class MedicalAppointmentService {
                     patient_id: appointment.patient_id,
                     doctor_id: appointment.doctor_id,
                 }
+            });
+
+            await this.prisma.patient.update({
+                where: {
+                    id: appointment.patient_id
+                },
+                data: {
+                    in_room: true,
+                },
             });
 
             return newAppointment;
@@ -69,7 +83,10 @@ export class MedicalAppointmentService {
         try {
             return this.prisma.medicalAppointments.findMany({
                 where: {
-                    doctor_id: doctor_id || null,
+                    OR: [
+                        { doctor_id: doctor_id },
+                        { doctor_id: null }
+                    ],
                 },
                 select: {
                     id: true,
@@ -92,6 +109,28 @@ export class MedicalAppointmentService {
             return this.prisma.medicalAppointments.findFirst({
                 where: {
                     id: appointment_id,
+                }
+            });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getCurrtentAppointment(doctor_id: number) {
+        try {
+            return this.prisma.medicalAppointments.findFirst({
+                where: {
+                    status: AppointmentStatusConstants.IN_PROGRESS,
+                    doctor_id: doctor_id,
+                },
+                select: {
+                    id: true,
+                    status: true,
+                    patient: true,
+                    doctor: true,
+                    record: true,
+                    createdAt: true,
+                    updatedAt: true,
                 }
             });
         } catch (error) {
